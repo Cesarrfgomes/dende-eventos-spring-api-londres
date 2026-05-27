@@ -1,0 +1,13 @@
+package com.dendeframework.dendeeventos.londres;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class LondresApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(LondresApplication.class, args);
+	}
+
+}
