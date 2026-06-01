@@ -31,4 +31,25 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
+
+
+    @ExceptionHandler(DataInicioMaiorQueDataFimException.class)
+    public ResponseEntity<Object> dataInicio(DataInicioMaiorQueDataFimException e) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("message", e.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IntervaloMinimoNaoAtingidoException.class)
+    public ResponseEntity<Object> intervaloMinimo(IntervaloMinimoNaoAtingidoException e) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("message", e.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 }

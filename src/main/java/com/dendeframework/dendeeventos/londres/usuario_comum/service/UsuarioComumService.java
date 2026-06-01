@@ -10,6 +10,7 @@ import com.dendeframework.dendeeventos.londres.usuario_comum.dto.CriarUsuarioCom
 import com.dendeframework.dendeeventos.londres.usuario_comum.dto.ReativarUsuarioComumRequestDTO;
 import com.dendeframework.dendeeventos.londres.usuario_comum.dto.UsuarioComumDTO;
 import com.dendeframework.dendeeventos.londres.usuario_comum.mapper.UsuarioComumMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class UsuarioComumService {
         this.usuarioComumMapper = new UsuarioComumMapper();
     }
 
+    @Transactional
     public UsuarioComumDTO criarUsuarioComum(CriarUsuarioComumRequestDTO dto) {
         Optional<Usuario> usuario = this.repository.findByEmail(dto.email());
 
@@ -42,9 +44,9 @@ public class UsuarioComumService {
         return this.usuarioComumMapper.toDTO(novoUsuario);
     }
 
-
+    @Transactional
     public void atualizarUsuarioComum(Long id, AtualizarUsuarioComumRequestDTO dto) {
-        UsuarioComum usuario = buscarUsuarioComumPorId(id);
+        UsuarioComum usuario = this.buscarUsuarioComumPorId(id);
         usuario.setNome(dto.nome());
         usuario.setDataNascimento(dto.dataNascimento());
         usuario.setSexo(dto.sexo());
