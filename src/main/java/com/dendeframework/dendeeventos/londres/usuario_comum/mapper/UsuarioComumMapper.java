@@ -1,4 +1,4 @@
-package com.dendeframework.dendeeventos.londres.usuario_comum.mappers;
+package com.dendeframework.dendeeventos.londres.usuario_comum.mapper;
 
 import com.dendeframework.dendeeventos.londres.usuario.model.TipoUsuario;
 import com.dendeframework.dendeeventos.londres.usuario.model.UsuarioComum;
@@ -35,6 +35,7 @@ public class UsuarioComumMapper {
         entity.setEmail(dto.email());
         entity.setDataNascimento(dto.dataNascimento());
         entity.setIsAtivo(dto.isAtivo());
+        entity.setSexo(dto.sexo());
 
         return entity;
     }

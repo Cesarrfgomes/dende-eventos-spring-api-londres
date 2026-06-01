@@ -9,7 +9,7 @@ import com.dendeframework.dendeeventos.londres.usuario_comum.dto.AtualizarUsuari
 import com.dendeframework.dendeeventos.londres.usuario_comum.dto.CriarUsuarioComumRequestDTO;
 import com.dendeframework.dendeeventos.londres.usuario_comum.dto.ReativarUsuarioComumRequestDTO;
 import com.dendeframework.dendeeventos.londres.usuario_comum.dto.UsuarioComumDTO;
-import com.dendeframework.dendeeventos.londres.usuario_comum.mappers.UsuarioComumMapper;
+import com.dendeframework.dendeeventos.londres.usuario_comum.mapper.UsuarioComumMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ public class UsuarioComumService {
 
     public UsuarioComumService(UsuarioRepository usuarioRepository) {
         this.repository = usuarioRepository;
-        this.usuarioComumMapper = new  UsuarioComumMapper();
+        this.usuarioComumMapper = new UsuarioComumMapper();
     }
 
     public UsuarioComumDTO criarUsuarioComum(CriarUsuarioComumRequestDTO dto) {
@@ -37,9 +37,9 @@ public class UsuarioComumService {
         UsuarioComum usuarioComum = new UsuarioComum();
         BeanUtils.copyProperties(dto, usuarioComum);
 
-        UsuarioComum novoUsuario = repository.save(usuarioComum);
+        UsuarioComum novoUsuario = this.repository.save(usuarioComum);
 
-        return usuarioComumMapper.toDTO(novoUsuario);
+        return this.usuarioComumMapper.toDTO(novoUsuario);
     }
 
 
@@ -48,23 +48,23 @@ public class UsuarioComumService {
         usuario.setNome(dto.nome());
         usuario.setDataNascimento(dto.dataNascimento());
         usuario.setSexo(dto.sexo());
-        repository.save(usuario);
+        this.repository.save(usuario);
     }
 
     public UsuarioComumDTO getById(Long id) {
-        return usuarioComumMapper.toDTO(this.buscarUsuarioComumPorId(id));
+        return this.usuarioComumMapper.toDTO(this.buscarUsuarioComumPorId(id));
     }
 
     public UsuarioComumDTO getByEmail(String email) {
-        UsuarioComum usuario = (UsuarioComum) repository.findByEmail(email)
+        UsuarioComum usuario = (UsuarioComum) this.repository.findByEmail(email)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
-        return usuarioComumMapper.toDTO(usuario);
+        return this.usuarioComumMapper.toDTO(usuario);
     }
 
     public void desativarUsuarioComum(Long id) {
         UsuarioComum usuario = this.buscarUsuarioComumPorId(id);
         usuario.setIsAtivo(false);
-        repository.save(usuario);
+        this.repository.save(usuario);
     }
 
     public void reativarUsuarioComum(ReativarUsuarioComumRequestDTO dto) {
@@ -76,11 +76,11 @@ public class UsuarioComumService {
         }
 
         usuario.setIsAtivo(true);
-        repository.save(usuario);
+        this.repository.save(usuario);
     }
 
     private UsuarioComum buscarUsuarioComumPorId(Long id) {
-        return (UsuarioComum) repository.findById(id)
+        return (UsuarioComum) this.repository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
     }
 

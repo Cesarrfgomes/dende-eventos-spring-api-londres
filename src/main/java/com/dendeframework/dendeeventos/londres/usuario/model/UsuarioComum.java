@@ -8,6 +8,5 @@ import lombok.NoArgsConstructor;
 @Entity
 @DiscriminatorValue("COMUM")
 @NoArgsConstructor
-@Builder
 public class UsuarioComum extends Usuario {
 }

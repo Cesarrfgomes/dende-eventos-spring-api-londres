@@ -1,6 +1,7 @@
 package com.dendeframework.dendeeventos.londres.usuario.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
