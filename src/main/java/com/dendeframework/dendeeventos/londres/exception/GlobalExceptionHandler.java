@@ -55,4 +55,13 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptioDTO);
     }
+
+    @ExceptionHandler(CapacidadeMaximaAtingidaException.class)
+    public ResponseEntity<Object> capacidadeMaximaAtingida(CapacidadeMaximaAtingidaException e) {
+        ExceptioDTO exceptioDTO = ExceptioDTO.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .mensagem(e.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptioDTO);
+    }
 }
