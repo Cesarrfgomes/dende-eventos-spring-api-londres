@@ -1,10 +1,12 @@
 package com.dendeframework.dendeeventos.londres.evento.service;
 
+import com.dendeframework.dendeeventos.londres.evento.dto.AtualizarEventoRequestDTO;
 import com.dendeframework.dendeeventos.londres.evento.dto.CriarEventoRequestDTO;
 import com.dendeframework.dendeeventos.londres.evento.dto.EventoDTO;
 import com.dendeframework.dendeeventos.londres.evento.infra.EventoRepository;
 import com.dendeframework.dendeeventos.londres.evento.mapper.EventoMapper;
 import com.dendeframework.dendeeventos.londres.evento.model.Evento;
+import com.dendeframework.dendeeventos.londres.exception.ConflitoException;
 import com.dendeframework.dendeeventos.londres.exception.RecursoNaoEncontradoException;
 import com.dendeframework.dendeeventos.londres.usuario_organizador.dto.UsuarioOrganizadorDTO;
 import com.dendeframework.dendeeventos.londres.usuario_organizador.mapper.UsuarioOrganizadorMapper;
@@ -62,6 +64,38 @@ public class EventoService {
         Evento novoEvento = this.eventoRepository.save(evento);
 
         return this.eventoMapper.toDTO(novoEvento);
+    }
+
+    @Transactional
+    public EventoDTO atualizarEvento(Long organizadorId, Long eventoId, AtualizarEventoRequestDTO dto) {
+        Evento evento = this.buscarEventoDoOrganizador(eventoId, organizadorId);
+
+        if (!Boolean.TRUE.equals(evento.getIsAtivo())) {
+            throw new ConflitoException("Somente eventos ativos podem ser alterados.");
+        }
+
+        Evento eventoPrincipal = null;
+        if (dto.eventoPrincipalId() != null) {
+            eventoPrincipal = this.buscarEventoPorId(dto.eventoPrincipalId());
+        }
+
+        evento.setNome(dto.nome());
+        evento.setDescricao(dto.descricao());
+        evento.setPaginaWeb(dto.paginaWeb());
+        evento.setTipoEvento(dto.tipoEvento());
+        evento.setModalidade(dto.modalidadeEvento());
+        evento.setLocalEvento(dto.localEvento());
+        evento.setDataInicio(dto.dataInicio());
+        evento.setDataFim(dto.dataFim());
+        evento.setCapacidadeMaxima(dto.capacidadeMaxima());
+        evento.setPrecoIngresso(dto.precoIngresso());
+        evento.setEstornaIngresso(dto.estornaIngresso());
+        evento.setTaxaEstorno(dto.taxaEstorno());
+        evento.setEventoPrincipal(eventoPrincipal);
+
+        Evento eventoAtualizado = this.eventoRepository.save(evento);
+
+        return this.eventoMapper.toDTO(eventoAtualizado);
     }
 
     @Transactional

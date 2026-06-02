@@ -1,5 +1,6 @@
 package com.dendeframework.dendeeventos.londres.evento.api;
 
+import com.dendeframework.dendeeventos.londres.evento.dto.AtualizarEventoRequestDTO;
 import com.dendeframework.dendeeventos.londres.evento.dto.CriarEventoRequestDTO;
 import com.dendeframework.dendeeventos.londres.evento.dto.EventoDTO;
 import com.dendeframework.dendeeventos.londres.exception.ExceptioDTO;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -44,6 +46,41 @@ public interface EventoController {
     })
     @PostMapping
     ResponseEntity<EventoDTO> criarEvento(@PathVariable("organizadorId") Long organizadorId, @RequestBody CriarEventoRequestDTO dto);
+
+    @Operation(summary = "Atualizar um evento", description = "Altera os dados de um evento ativo do organizador. A ativação/desativação é feita por endpoints próprios e não é alterada aqui.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Evento atualizado com sucesso",
+                    content = @Content(
+                            schema = @Schema(implementation = EventoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Evento não encontrado",
+                    content = @Content(
+                            schema = @Schema(implementation = ExceptioDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Evento não encontrado",
+                                    value = "{\"status\": 404, \"mensagem\": \"Evento não encontrado\"}"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Evento não está ativo",
+                    content = @Content(
+                            schema = @Schema(implementation = ExceptioDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Somente eventos ativos podem ser alterados",
+                                    value = "{\"status\": 409, \"mensagem\": \"Somente eventos ativos podem ser alterados.\"}"
+                            )
+                    )
+            )
+    })
+    @PutMapping("/{eventoId}")
+    ResponseEntity<EventoDTO> atualizarEvento(@PathVariable("organizadorId") Long organizadorId, @PathVariable("eventoId") Long eventoId, @RequestBody AtualizarEventoRequestDTO dto);
 
     @Operation(summary = "Ativar um evento", description = "Torna o evento visível na plataforma e libera a venda de ingressos.")
     @ApiResponses(value = {

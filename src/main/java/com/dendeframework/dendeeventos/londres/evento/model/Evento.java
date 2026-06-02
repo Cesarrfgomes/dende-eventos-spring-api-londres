@@ -83,6 +83,7 @@ public class Evento {
     private List<Evento> subEventos = new ArrayList<>();
 
     @PrePersist
+    @PreUpdate
     public void prePersist() {
         if (this.dataCadastro == null) {
             this.dataCadastro = LocalDateTime.now();

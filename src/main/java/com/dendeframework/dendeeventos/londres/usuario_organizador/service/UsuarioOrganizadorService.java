@@ -5,6 +5,7 @@ import com.dendeframework.dendeeventos.londres.exception.ConflitoException;
 import com.dendeframework.dendeeventos.londres.exception.OrganizadorComEventosAtivosException;
 import com.dendeframework.dendeeventos.londres.exception.RecursoNaoEncontradoException;
 import com.dendeframework.dendeeventos.londres.usuario.infra.UsuarioRepository;
+import com.dendeframework.dendeeventos.londres.usuario.model.TipoUsuario;
 import com.dendeframework.dendeeventos.londres.usuario.model.Usuario;
 import com.dendeframework.dendeeventos.londres.usuario.model.UsuarioOrganizador;
 import com.dendeframework.dendeeventos.londres.usuario_organizador.dto.AtualizarUsuarioOrganizadorRequestDTO;
@@ -96,9 +97,7 @@ public class UsuarioOrganizadorService {
     }
 
     private UsuarioOrganizador buscarUsuarioOrganizadorPorId(Long id) {
-        return (UsuarioOrganizador) this.repository.findById(id)
+        return (UsuarioOrganizador) this.repository.findByIdAndTipoUsuario(id, TipoUsuario.ORGANIZADOR.name())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
     }
-
-
 }

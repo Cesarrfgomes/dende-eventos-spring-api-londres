@@ -3,6 +3,7 @@ package com.dendeframework.dendeeventos.londres.usuario_comum.service;
 import com.dendeframework.dendeeventos.londres.exception.ConflitoException;
 import com.dendeframework.dendeeventos.londres.exception.RecursoNaoEncontradoException;
 import com.dendeframework.dendeeventos.londres.usuario.infra.UsuarioRepository;
+import com.dendeframework.dendeeventos.londres.usuario.model.TipoUsuario;
 import com.dendeframework.dendeeventos.londres.usuario.model.Usuario;
 import com.dendeframework.dendeeventos.londres.usuario.model.UsuarioComum;
 import com.dendeframework.dendeeventos.londres.usuario_comum.dto.AtualizarUsuarioComumRequestDTO;
@@ -84,7 +85,7 @@ public class UsuarioComumService {
     }
 
     private UsuarioComum buscarUsuarioComumPorId(Long id) {
-        return (UsuarioComum) this.repository.findById(id)
+        return (UsuarioComum) this.repository.findByIdAndTipoUsuario(id, TipoUsuario.COMUM.name())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
     }
 }

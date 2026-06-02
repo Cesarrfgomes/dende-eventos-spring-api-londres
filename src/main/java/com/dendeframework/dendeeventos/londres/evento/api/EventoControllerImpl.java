@@ -1,5 +1,6 @@
 package com.dendeframework.dendeeventos.londres.evento.api;
 
+import com.dendeframework.dendeeventos.londres.evento.dto.AtualizarEventoRequestDTO;
 import com.dendeframework.dendeeventos.londres.evento.dto.CriarEventoRequestDTO;
 import com.dendeframework.dendeeventos.londres.evento.dto.EventoDTO;
 import com.dendeframework.dendeeventos.londres.evento.service.EventoService;
@@ -21,6 +22,13 @@ public class EventoControllerImpl implements EventoController {
         EventoDTO novoEvento = this.service.criarEvento(organizadorId, dto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(novoEvento);
+    }
+
+    @Override
+    public ResponseEntity<EventoDTO> atualizarEvento(Long organizadorId, Long eventoId, AtualizarEventoRequestDTO dto) {
+        EventoDTO eventoAtualizado = this.service.atualizarEvento(organizadorId, eventoId, dto);
+
+        return ResponseEntity.ok(eventoAtualizado);
     }
 
     @Override
