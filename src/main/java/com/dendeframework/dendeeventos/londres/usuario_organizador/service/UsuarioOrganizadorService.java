@@ -1,12 +1,15 @@
 package com.dendeframework.dendeeventos.londres.usuario_organizador.service;
 
+import com.dendeframework.dendeeventos.londres.evento.infra.EventoRepository;
 import com.dendeframework.dendeeventos.londres.exception.ConflitoException;
+import com.dendeframework.dendeeventos.londres.exception.OrganizadorComEventosAtivosException;
 import com.dendeframework.dendeeventos.londres.exception.RecursoNaoEncontradoException;
 import com.dendeframework.dendeeventos.londres.usuario.infra.UsuarioRepository;
 import com.dendeframework.dendeeventos.londres.usuario.model.Usuario;
 import com.dendeframework.dendeeventos.londres.usuario.model.UsuarioOrganizador;
 import com.dendeframework.dendeeventos.londres.usuario_organizador.dto.AtualizarUsuarioOrganizadorRequestDTO;
 import com.dendeframework.dendeeventos.londres.usuario_organizador.dto.CriarUsuarioOrganizadorRequestDTO;
+import com.dendeframework.dendeeventos.londres.usuario_organizador.dto.ReativarUsuarioOrganizadorRequestDTO;
 import com.dendeframework.dendeeventos.londres.usuario_organizador.dto.UsuarioOrganizadorDTO;
 import com.dendeframework.dendeeventos.londres.usuario_organizador.mapper.UsuarioOrganizadorMapper;
 import org.springframework.beans.BeanUtils;
@@ -22,9 +25,12 @@ public class UsuarioOrganizadorService {
 
     private final UsuarioOrganizadorMapper usuarioOrganizadorMapper;
 
-    public UsuarioOrganizadorService(UsuarioRepository repository) {
+    private final EventoRepository eventoRepository;
+
+    public UsuarioOrganizadorService(UsuarioRepository repository, EventoRepository eventoRepository) {
         this.repository = repository;
         this.usuarioOrganizadorMapper = new UsuarioOrganizadorMapper();
+        this.eventoRepository = eventoRepository;
     }
 
     @Transactional
@@ -59,6 +65,34 @@ public class UsuarioOrganizadorService {
 
     public UsuarioOrganizadorDTO getById(Long id) {
         return this.usuarioOrganizadorMapper.toDTO(this.buscarUsuarioOrganizadorPorId(id));
+    }
+
+    @Transactional
+    public void desativarUsuarioOrganizador(Long id) {
+        boolean organizadorTemEventosAtivos = this.eventoRepository.existsByOrganizadorIdAndIsAtivoTrue(id);
+
+        if (organizadorTemEventosAtivos) {
+            throw new OrganizadorComEventosAtivosException("O organizador tem eventos ativos, não foi possível desativa-lo.");
+        }
+
+        UsuarioOrganizador usuarioOrganizador = this.buscarUsuarioOrganizadorPorId(id);
+
+        usuarioOrganizador.setIsAtivo(false);
+
+        this.repository.save(usuarioOrganizador);
+    }
+
+    @Transactional
+    public void reativarUsuarioOrganizador(ReativarUsuarioOrganizadorRequestDTO dto) {
+        UsuarioOrganizador usuario = (UsuarioOrganizador) repository.findByEmail(dto.email())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
+
+        if (!usuario.getSenha().equals(dto.senha())) {
+            throw new ConflitoException("Credenciais inválidas");
+        }
+
+        usuario.setIsAtivo(true);
+        this.repository.save(usuario);
     }
 
     private UsuarioOrganizador buscarUsuarioOrganizadorPorId(Long id) {

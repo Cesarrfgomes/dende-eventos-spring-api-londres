@@ -49,8 +49,6 @@ public class UsuarioOrganizadorMapper {
             return null;
         }
 
-        // id deixado nulo de propósito: na criação a empresa é sempre nova,
-        // evitando o "detached entity passed to persist" no cascade.
         Empresa empresa = new Empresa();
         empresa.setCnpj(dto.cnpj());
         empresa.setRazaoSocial(dto.razaoSocial());

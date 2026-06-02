@@ -35,9 +35,11 @@ public class Evento {
     @Column(name = "pagina_web", length = 500)
     private String paginaWeb;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_evento", length = 30, nullable = false)
     private TipoEvento tipoEvento;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "modalidade", length = 10, nullable = false)
     private ModalidadeEvento modalidade;
 
@@ -76,6 +78,7 @@ public class Evento {
     @JoinColumn(name = "evento_principal_id")
     private Evento eventoPrincipal;
 
+    @Builder.Default
     @OneToMany(mappedBy = "eventoPrincipal")
     private List<Evento> subEventos = new ArrayList<>();
 

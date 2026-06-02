@@ -63,12 +63,14 @@ public class UsuarioComumService {
         return this.usuarioComumMapper.toDTO(usuario);
     }
 
+    @Transactional
     public void desativarUsuarioComum(Long id) {
         UsuarioComum usuario = this.buscarUsuarioComumPorId(id);
         usuario.setIsAtivo(false);
         this.repository.save(usuario);
     }
 
+    @Transactional
     public void reativarUsuarioComum(ReativarUsuarioComumRequestDTO dto) {
         UsuarioComum usuario = (UsuarioComum) repository.findByEmail(dto.email())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
@@ -85,6 +87,4 @@ public class UsuarioComumService {
         return (UsuarioComum) this.repository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
     }
-
-
 }

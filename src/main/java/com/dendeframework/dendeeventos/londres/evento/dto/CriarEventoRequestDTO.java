@@ -2,14 +2,10 @@ package com.dendeframework.dendeeventos.londres.evento.dto;
 
 import com.dendeframework.dendeeventos.londres.evento.model.ModalidadeEvento;
 import com.dendeframework.dendeeventos.londres.evento.model.TipoEvento;
-import com.dendeframework.dendeeventos.londres.usuario_organizador.dto.UsuarioOrganizadorDTO;
-import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Builder(toBuilder = true)
-public record EventoDTO(
-        Long id,
+public record CriarEventoRequestDTO(
         String nome,
         String descricao,
         String paginaWeb,
@@ -22,9 +18,6 @@ public record EventoDTO(
         Double precoIngresso,
         Boolean estornaIngresso,
         Double taxaEstorno,
-        Boolean isAtivo,
-        LocalDateTime dataCadastro,
-        UsuarioOrganizadorDTO organizador,
-        EventoDTO eventoPrincipal
+        Long eventoPrincipalId
 ) {
 }

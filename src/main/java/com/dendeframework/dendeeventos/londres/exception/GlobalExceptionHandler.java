@@ -5,51 +5,54 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConflitoException.class)
     public ResponseEntity<Object> conflito(ConflitoException e) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.CONFLICT.value());
-        body.put("message", e.getMessage());
+        ExceptioDTO exceptioDTO = ExceptioDTO.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .mensagem(e.getMessage())
+                .build();
 
-        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptioDTO);
     }
 
     @ExceptionHandler(RecursoNaoEncontradoException.class)
-    public ResponseEntity<Object> naoEncontrado(RecursoNaoEncontradoException e) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("message", e.getMessage());
+    public ResponseEntity<ExceptioDTO> naoEncontrado(RecursoNaoEncontradoException e) {
+        ExceptioDTO exceptioDTO = ExceptioDTO.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .mensagem(e.getMessage())
+                .build();
 
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptioDTO);
     }
 
 
     @ExceptionHandler(DataInicioMaiorQueDataFimException.class)
     public ResponseEntity<Object> dataInicio(DataInicioMaiorQueDataFimException e) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("message", e.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        ExceptioDTO exceptioDTO = ExceptioDTO.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .mensagem(e.getMessage())
+                .build();
+        return ResponseEntity.badRequest().body(exceptioDTO);
     }
 
     @ExceptionHandler(IntervaloMinimoNaoAtingidoException.class)
     public ResponseEntity<Object> intervaloMinimo(IntervaloMinimoNaoAtingidoException e) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("message", e.getMessage());
+        ExceptioDTO exceptioDTO = ExceptioDTO.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .mensagem(e.getMessage())
+                .build();
+        return ResponseEntity.badRequest().body(exceptioDTO);
+    }
 
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(OrganizadorComEventosAtivosException.class)
+    public ResponseEntity<Object> organizadorComEventosAtivos(OrganizadorComEventosAtivosException e) {
+        ExceptioDTO exceptioDTO = ExceptioDTO.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .mensagem(e.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptioDTO);
     }
 }

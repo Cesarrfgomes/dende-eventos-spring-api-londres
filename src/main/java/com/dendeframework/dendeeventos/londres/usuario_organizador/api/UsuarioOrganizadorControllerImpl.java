@@ -22,4 +22,11 @@ public class UsuarioOrganizadorControllerImpl implements UsuarioOrganizadorContr
 
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
     }
+
+    @Override
+    public ResponseEntity<UsuarioOrganizadorDTO> buscarPorId(Long id) {
+        UsuarioOrganizadorDTO usuario = this.service.getById(id);
+
+        return ResponseEntity.ok(usuario);
+    }
 }

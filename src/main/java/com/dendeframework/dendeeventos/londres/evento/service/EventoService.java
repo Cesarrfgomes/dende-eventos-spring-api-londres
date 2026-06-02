@@ -1,5 +1,6 @@
 package com.dendeframework.dendeeventos.londres.evento.service;
 
+import com.dendeframework.dendeeventos.londres.evento.dto.CriarEventoRequestDTO;
 import com.dendeframework.dendeeventos.londres.evento.dto.EventoDTO;
 import com.dendeframework.dendeeventos.londres.evento.infra.EventoRepository;
 import com.dendeframework.dendeeventos.londres.evento.mapper.EventoMapper;
@@ -10,6 +11,8 @@ import com.dendeframework.dendeeventos.londres.usuario_organizador.mapper.Usuari
 import com.dendeframework.dendeeventos.londres.usuario_organizador.service.UsuarioOrganizadorService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class EventoService {
@@ -30,35 +33,58 @@ public class EventoService {
     }
 
     @Transactional
-    public EventoDTO criarEvento(EventoDTO eventoDTO) {
-        UsuarioOrganizadorDTO organizador = this.usuarioOrganizadorService.getById(eventoDTO.organizador().id());
+    public EventoDTO criarEvento(Long organizadorId, CriarEventoRequestDTO dto) {
+        UsuarioOrganizadorDTO organizador = this.usuarioOrganizadorService.getById(organizadorId);
 
         Evento eventoPrincipal = null;
-        if (eventoDTO.eventoPrincipal() != null && eventoDTO.eventoPrincipal().id() != null) {
-            eventoPrincipal = this.buscarEventoPorId(eventoDTO.eventoPrincipal().id());
+        if (dto.eventoPrincipalId() != null) {
+            eventoPrincipal = this.buscarEventoPorId(dto.eventoPrincipalId());
         }
 
         Evento evento = Evento.builder()
-                .nome(eventoDTO.nome())
-                .descricao(eventoDTO.descricao())
-                .paginaWeb(eventoDTO.paginaWeb())
-                .tipoEvento(eventoDTO.tipoEvento())
-                .modalidade(eventoDTO.modalidadeEvento())
-                .localEvento(eventoDTO.localEvento())
-                .dataInicio(eventoDTO.dataInicio())
-                .dataFim(eventoDTO.dataFim())
-                .capacidadeMaxima(eventoDTO.capacidadeMaxima())
-                .precoIngresso(eventoDTO.precoIngresso())
-                .estornaIngresso(eventoDTO.estornaIngresso())
-                .taxaEstorno(eventoDTO.taxaEstorno())
+                .nome(dto.nome())
+                .descricao(dto.descricao())
+                .paginaWeb(dto.paginaWeb())
+                .tipoEvento(dto.tipoEvento())
+                .modalidade(dto.modalidadeEvento())
+                .localEvento(dto.localEvento())
+                .dataInicio(dto.dataInicio())
+                .dataFim(dto.dataFim())
+                .capacidadeMaxima(dto.capacidadeMaxima())
+                .precoIngresso(dto.precoIngresso())
+                .estornaIngresso(dto.estornaIngresso())
+                .taxaEstorno(dto.taxaEstorno())
                 .isAtivo(false)
-                .organizador(organizadorMapper.toEntity(eventoDTO.organizador()))
+                .organizador(organizadorMapper.toEntity(organizador))
                 .eventoPrincipal(eventoPrincipal)
                 .build();
 
         Evento novoEvento = this.eventoRepository.save(evento);
 
         return this.eventoMapper.toDTO(novoEvento);
+    }
+
+    @Transactional
+    public void ativarEvento(Long usuarioOrganizadorId, Long eventoId) {
+        Evento evento = this.buscarEventoDoOrganizador(eventoId, usuarioOrganizadorId);
+
+        evento.setIsAtivo(true);
+
+        this.eventoRepository.save(evento);
+    }
+
+    @Transactional
+    public void desativarEvento(Long usuarioOrganizadorId, Long eventoId) {
+        Evento evento = this.buscarEventoDoOrganizador(eventoId, usuarioOrganizadorId);
+
+        evento.setIsAtivo(false);
+
+        this.eventoRepository.save(evento);
+    }
+
+    private Evento buscarEventoDoOrganizador(Long eventoId, Long organizadorId) {
+        return this.eventoRepository.findByIdAndOrganizadorId(eventoId, organizadorId)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Evento não encontrado"));
     }
 
     private Evento buscarEventoPorId(Long id) {
