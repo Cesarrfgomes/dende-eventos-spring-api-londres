@@ -14,10 +14,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -92,4 +94,43 @@ public interface IngressoController {
     })
     @GetMapping("/usuario/{usuarioComumId}")
     ResponseEntity<List<IngressoDTO>> listarIngressosDoUsuario(@PathVariable("usuarioComumId") Long usuarioComumId);
+
+    @Operation(
+            summary = "Cancelar um ingresso",
+            description = "Cancela um ingresso comprado pelo usuário. O ingresso é marcado como cancelado, o valor pago é "
+                    + "estornado conforme as regras do evento e a vaga volta a ficar disponível para venda."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ingresso cancelado com sucesso",
+                    content = @Content(
+                            schema = @Schema(implementation = IngressoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuário ou ingresso não encontrado",
+                    content = @Content(
+                            schema = @Schema(implementation = ExceptioDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Ingresso não encontrado",
+                                    value = "{\"status\": 404, \"mensagem\": \"Ingresso não encontrado\"}"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Ingresso já cancelado",
+                    content = @Content(
+                            schema = @Schema(implementation = ExceptioDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Ingresso já cancelado",
+                                    value = "{\"status\": 409, \"mensagem\": \"Ingresso já está cancelado.\"}"
+                            )
+                    )
+            )
+    })
+    @PatchMapping("/{ingressoId}/cancelar")
+    ResponseEntity<IngressoDTO> cancelarIngresso(@PathVariable("ingressoId") Long ingressoId, @RequestParam("usuarioComumId") Long usuarioComumId);
 }

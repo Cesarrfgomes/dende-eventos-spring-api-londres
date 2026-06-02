@@ -75,6 +75,39 @@ public class IngressoService {
                 .build();
     }
 
+    @Transactional
+    public IngressoDTO cancelarIngresso(Long usuarioComumId, Long ingressoId) {
+        UsuarioComum usuario = this.buscarUsuarioComum(usuarioComumId);
+
+        Ingresso ingresso = this.buscarIngressoPorId(ingressoId);
+
+        if (ingresso.getUsuarioComum() == null
+                || !ingresso.getUsuarioComum().getId().equals(usuario.getId())) {
+            throw new RecursoNaoEncontradoException("Ingresso não encontrado");
+        }
+
+        if (ingresso.getStatus() == StatusIngresso.CANCELADO) {
+            throw new ConflitoException("Ingresso já está cancelado.");
+        }
+
+        Evento evento = ingresso.getEvento();
+
+        if (!Boolean.TRUE.equals(evento.getEstornaIngresso())) {
+            ingresso.setValorEstornado(0.0);
+
+        }
+
+        double estorno = ingresso.getValorPago() * (1 - evento.getTaxaEstorno());
+
+        ingresso.setStatus(StatusIngresso.CANCELADO);
+        ingresso.setDataCancelamento(LocalDateTime.now());
+        ingresso.setValorEstornado(estorno);
+
+        Ingresso ingressoCancelado = this.ingressoRepository.save(ingresso);
+
+        return this.ingressoMapper.toDTO(ingressoCancelado);
+    }
+
     public List<IngressoDTO> listarIngressosDoUsuario(Long usuarioComumId) {
         UsuarioComum usuario = this.buscarUsuarioComum(usuarioComumId);
 
@@ -117,5 +150,10 @@ public class IngressoService {
         }
 
         return evento;
+    }
+
+    private Ingresso buscarIngressoPorId(Long id) {
+        return this.ingressoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Ingresso não encontrado"));
     }
 }

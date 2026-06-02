@@ -32,4 +32,11 @@ public class IngressoControllerImpl implements IngressoController {
 
         return ResponseEntity.ok(ingressos);
     }
+
+    @Override
+    public ResponseEntity<IngressoDTO> cancelarIngresso(Long ingressoId, Long usuarioComumId) {
+        IngressoDTO ingresso = this.service.cancelarIngresso(usuarioComumId, ingressoId);
+
+        return ResponseEntity.ok(ingresso);
+    }
 }
