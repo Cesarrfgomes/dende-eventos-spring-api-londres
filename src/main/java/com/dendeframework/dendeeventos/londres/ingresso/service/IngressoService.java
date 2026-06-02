@@ -66,7 +66,7 @@ public class IngressoService {
                 .sum();
 
         List<IngressoDTO> ingressosDTO = ingressosSalvos.stream()
-                .map(this.ingressoMapper::toDTO)
+                .map((ingresso) -> this.ingressoMapper.toDTO(ingresso))
                 .toList();
 
         return CompraIngressoDTO.builder()
@@ -112,7 +112,7 @@ public class IngressoService {
         UsuarioComum usuario = this.buscarUsuarioComum(usuarioComumId);
 
         return this.ingressoRepository.findIngressosDoUsuarioOrdenados(usuario.getId()).stream()
-                .map(this.ingressoMapper::toDTO)
+                .map((ingresso) -> this.ingressoMapper.toDTO(ingresso))
                 .toList();
     }
 

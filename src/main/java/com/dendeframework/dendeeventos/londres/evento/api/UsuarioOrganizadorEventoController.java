@@ -5,6 +5,7 @@ import com.dendeframework.dendeeventos.londres.evento.dto.CriarEventoRequestDTO;
 import com.dendeframework.dendeeventos.londres.evento.dto.EventoDTO;
 import com.dendeframework.dendeeventos.londres.exception.ExceptioDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,16 +13,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Evento", description = "Operações de cadastro e gestão e eventos")
 @RequestMapping("/organizadores/{organizadorId}/eventos")
-public interface EventoController {
+public interface UsuarioOrganizadorEventoController {
 
     @Operation(summary = "Criar um evento")
     @ApiResponses(value = {
@@ -117,4 +115,28 @@ public interface EventoController {
     })
     @PatchMapping("/{eventoId}/desativar")
     ResponseEntity<Void> desativarEvento(@PathVariable("organizadorId") Long organizadorId, @PathVariable("eventoId") Long eventoId);
+
+    @Operation(summary = "Listar eventos de um organizador", description = "Lista os eventos criados por um organizador.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de eventos",
+                    content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = EventoDTO.class))
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Organizador não encontrado",
+                    content = @Content(
+                            schema = @Schema(implementation = ExceptioDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Organizador não encontrado",
+                                    value = "{\"status\": 404, \"mensagem\": \"Organizador não encontrado\"}"
+                            )
+                    )
+            )
+    })
+    @GetMapping
+    ResponseEntity<List<EventoDTO>> findByOrganizadorId(@PathVariable("organizadorId") Long organizadorId);
 }

@@ -98,6 +98,18 @@ public class EventoService {
         return this.eventoMapper.toDTO(eventoAtualizado);
     }
 
+    public List<EventoDTO> findByOrganizadorId(Long organizadorId) {
+        return this.eventoRepository.findByOrganizadorId(organizadorId).stream()
+                .map((evento) -> this.eventoMapper.toDTO(evento))
+                .toList();
+    }
+
+    public List<EventoDTO> findFeedEventosAtivos() {
+        return this.eventoRepository.findFeedEventosAtivos().stream()
+                .map((evento) -> this.eventoMapper.toDTO(evento))
+                .toList();
+    }
+
     @Transactional
     public void ativarEvento(Long usuarioOrganizadorId, Long eventoId) {
         Evento evento = this.buscarEventoDoOrganizador(eventoId, usuarioOrganizadorId);

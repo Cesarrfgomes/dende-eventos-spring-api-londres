@@ -8,12 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-public class EventoControllerImpl implements EventoController {
+public class UsuarioOrganizadorEventoControllerImpl implements UsuarioOrganizadorEventoController {
 
     private final EventoService service;
 
-    public EventoControllerImpl(EventoService service) {
+    public UsuarioOrganizadorEventoControllerImpl(EventoService service) {
         this.service = service;
     }
 
@@ -43,5 +45,12 @@ public class EventoControllerImpl implements EventoController {
         this.service.desativarEvento(organizadorId, eventoId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<List<EventoDTO>> findByOrganizadorId(Long organizadorId) {
+        List<EventoDTO> eventos = this.service.findByOrganizadorId(organizadorId);
+
+        return ResponseEntity.ok(eventos);
     }
 }
