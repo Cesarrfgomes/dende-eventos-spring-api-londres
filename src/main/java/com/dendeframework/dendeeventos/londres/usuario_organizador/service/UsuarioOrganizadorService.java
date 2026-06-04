@@ -1,5 +1,7 @@
 package com.dendeframework.dendeeventos.londres.usuario_organizador.service;
 
+import com.dendeframework.dendeeventos.londres.empresa.dto.EmpresaDTO;
+import com.dendeframework.dendeeventos.londres.empresa.model.Empresa;
 import com.dendeframework.dendeeventos.londres.evento.infra.EventoRepository;
 import com.dendeframework.dendeeventos.londres.exception.ConflitoException;
 import com.dendeframework.dendeeventos.londres.exception.OrganizadorComEventosAtivosException;
@@ -55,13 +57,31 @@ public class UsuarioOrganizadorService {
     }
 
     @Transactional
-    public void atulizarUsuarioOrganizador(Long id, AtualizarUsuarioOrganizadorRequestDTO dto) {
+    public void atualizarUsuarioOrganizador(Long id, AtualizarUsuarioOrganizadorRequestDTO dto) {
         UsuarioOrganizador usuario = this.buscarUsuarioOrganizadorPorId(id);
         usuario.setNome(dto.nome());
         usuario.setDataNascimento(dto.dataNascimento());
         usuario.setSexo(dto.sexo());
-        usuario.setEmpresa(usuarioOrganizadorMapper.toEmpresaEntity(dto.empresa()));
+        this.atualizarEmpresa(usuario, dto.empresa());
         this.repository.save(usuario);
+    }
+
+    private void atualizarEmpresa(UsuarioOrganizador usuario, EmpresaDTO dto) {
+        if (dto == null) {
+            usuario.setEmpresa(null);
+            return;
+        }
+
+        Empresa empresa = usuario.getEmpresa();
+
+        if (empresa == null) {
+            usuario.setEmpresa(this.usuarioOrganizadorMapper.toEmpresaEntity(dto));
+            return;
+        }
+
+        empresa.setCnpj(dto.cnpj());
+        empresa.setRazaoSocial(dto.razaoSocial());
+        empresa.setNomeFantasia(dto.nomeFantasia());
     }
 
     public UsuarioOrganizadorDTO getById(Long id) {
