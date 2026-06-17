@@ -15,7 +15,7 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     @Query(value = """
         SELECT e.* FROM evento e
         WHERE e.ativo = TRUE
-          AND e.data_inicio > NOW()
+          AND e.data_fim > NOW()
           AND (
               SELECT COUNT(*) FROM ingresso i
               WHERE i.evento_id = e.id
